@@ -1,10 +1,21 @@
 import type { ApiErrorBody, HealthResponse, StudyMaterial, UploadResponse } from '../types/api'
 
 /**
- * API base URL. In dev, Vite proxies /api to the FastAPI backend, so the
- * default is same-origin. Override with VITE_API_BASE_URL for other setups.
+ * API base URL.
+ *
+ * Development: same-origin `/api`, proxied to FastAPI by the Vite dev server.
+ *
+ * Production: the backend is a separate service on Render. Vercel only serves
+ * static files (no API routes, no proxy), so a same-origin `/api/...` request
+ * would be answered by Vercel with `404 NOT_FOUND` and never reach FastAPI.
+ * Override per-deployment with `VITE_API_BASE_URL` (must include `/api`).
  */
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api'
+const PRODUCTION_API_BASE = 'https://cognexa-p9yo.onrender.com/api'
+
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ??
+  (import.meta.env.PROD ? PRODUCTION_API_BASE : '/api')
+).replace(/\/+$/, '')
 
 /** Frontend upload constraints — mirrored by the backend (10 MB, PNG/JPEG). */
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024
@@ -71,13 +82,19 @@ export async function fetchResult(resultId: string): Promise<StudyMaterial> {
   return response.json()
 }
 
-/** Absolute URL for the uploaded source image (works through the Vite proxy). */
+/**
+ * Absolute URL for the uploaded source image.
+ *
+ * The backend returns fully-prefixed paths like `/api/uploads/{id}`, so the
+ * `/api` prefix is stripped before re-attaching the configured base — otherwise
+ * an absolute base such as `https://host/api` would produce `/api/api/...`.
+ * Relative bases keep working through the same-origin Vite proxy.
+ */
 export function sourceImageUrl(path: string): string {
   if (/^https?:\/\//i.test(path)) return path
-  // The backend already returns fully-prefixed paths like /api/uploads/{id}.
-  if (path.startsWith(`${API_BASE}/`) || path === API_BASE) return path
   const base = API_BASE.startsWith('/') ? window.location.origin + API_BASE : API_BASE
-  return `${base.replace(/\/$/, '')}${path}`
+  const suffix = path.startsWith('/api/') ? path.slice('/api'.length) : path
+  return `${base.replace(/\/$/, '')}${suffix}`
 }
 
 export function formatBytes(bytes: number): string {

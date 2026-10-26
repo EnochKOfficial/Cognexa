@@ -168,7 +168,21 @@ cd frontend && npm run build       # type-checks with tsc, outputs dist/
 cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-Serve `frontend/dist` from any static host and set `CORS_ORIGINS` to that origin.
+**Deployment split.** The app ships as two services, so the frontend must call the backend by
+absolute URL — Vercel serves `frontend/dist` as static files and has no API routes:
+
+| Part | Host | Notes |
+|---|---|---|
+| Frontend | Vercel, root directory `frontend` | Build `npm run build`, output `dist` |
+| Backend | Render, root directory `backend` | Start `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+
+Production builds default to `https://cognexa-p9yo.onrender.com/api` (see
+`frontend/src/lib/api.ts`). To point a build at a different backend, set `VITE_API_BASE_URL`
+(including the `/api` prefix) in the host's build environment.
+
+Set `CORS_ORIGINS` on the backend to every origin that serves the frontend, e.g.
+`https://cognexa-psi.vercel.app`. `frontend/vercel.json` rewrites unknown paths to
+`index.html` so client-side routes like `/workspace` survive a refresh.
 
 ---
 
@@ -303,7 +317,7 @@ Environment variables (see [`.env.example`](.env.example) / [`backend/.env.examp
 | `GEMMA_MODEL` | `gemma-4-31b-it` | Exact Gemma 4 model id (no substitutions) |
 | `AI_TIMEOUT_SECONDS` | `180` | Timeout for image analysis requests |
 | `MAX_UPLOAD_MB` | `10` | Upload size limit |
-| `CORS_ORIGINS` | `http://localhost:5173,...` | Allowed frontend origins |
+| `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173,https://cognexa-psi.vercel.app` | Allowed frontend origins (explicit list) |
 | `UPLOAD_DIR` | `uploads` | Private storage directory (relative to `backend/`) |
 | `MOCK_PROCESSING_DELAY` | `0.4` | Simulated latency for the mock provider only |
 

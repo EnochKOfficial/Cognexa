@@ -41,7 +41,10 @@ class Settings(BaseSettings):
 
     # --- Storage / CORS ---
     upload_dir: str = "uploads"
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    # Explicit allow-list: local development + the deployed Vercel frontend.
+    cors_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,https://cognexa-psi.vercel.app"
+    )
 
     # --- Demo polish ---
     mock_processing_delay: float = 0.4
