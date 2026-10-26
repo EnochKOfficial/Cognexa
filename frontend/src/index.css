@@ -1,0 +1,252 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — dark navy + violet/blue educational SaaS aesthetic  */
+/* ------------------------------------------------------------------ */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-ink: #04060d;
+  --color-navy-950: #070b16;
+  --color-navy-900: #0a0f1f;
+  --color-navy-800: #0f1630;
+  --color-panel: #101a33;
+  --color-panel-2: #16213f;
+  --color-line: rgba(148, 163, 184, 0.14);
+  --color-line-strong: rgba(148, 163, 184, 0.28);
+  --color-muted: #94a3b8;
+  --color-accent: #8b5cf6;
+  --color-accent-strong: #a78bfa;
+  --color-blue: #3b82f6;
+  --color-success: #34d399;
+  --color-success-dim: rgba(52, 211, 153, 0.12);
+  --color-danger: #f87171;
+  --color-danger-dim: rgba(248, 113, 113, 0.12);
+  --color-amber: #fbbf24;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(900px 500px at 12% -5%, rgba(139, 92, 246, 0.16), transparent 60%),
+    radial-gradient(820px 480px at 88% 0%, rgba(59, 130, 246, 0.13), transparent 55%),
+    radial-gradient(1000px 700px at 50% 115%, rgba(99, 102, 241, 0.10), transparent 60%);
+  background-attachment: fixed;
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: #fff;
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Subtle scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.38);
+  background-clip: content-box;
+}
+
+/* ------------------------------------------------------------------ */
+/* Component classes                                                   */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-panel/70 backdrop-blur-sm;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px rgba(2, 6, 23, 0.45);
+  }
+
+  .btn-primary {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5
+      text-sm font-medium text-white transition-all duration-150 select-none
+      disabled:cursor-not-allowed disabled:opacity-50;
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 55%, #3b82f6 130%);
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+  }
+  .btn-primary:hover:not(:disabled) {
+    filter: brightness(1.1);
+    box-shadow: 0 10px 28px rgba(124, 58, 237, 0.45);
+  }
+  .btn-primary:active:not(:disabled) {
+    filter: brightness(0.96);
+  }
+
+  .btn-secondary {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line
+      bg-navy-800/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition-all duration-150
+      select-none hover:border-line-strong hover:bg-panel-2
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5
+      text-sm font-medium text-slate-300 transition-colors duration-150 select-none
+      hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-navy-800/70
+      px-3 py-1 text-xs font-medium text-slate-300;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Animations                                                          */
+/* ------------------------------------------------------------------ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-soft-pulse {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 1.1s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -220% 0;
+  }
+  to {
+    background-position: 220% 0;
+  }
+}
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.06) 25%,
+    rgba(148, 163, 184, 0.16) 50%,
+    rgba(148, 163, 184, 0.06) 75%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-soft-pulse,
+  .animate-spin-slow,
+  .animate-shimmer {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* React Flow overrides to match the theme                             */
+/* ------------------------------------------------------------------ */
+.react-flow__minimap {
+  background: #0a0f1f !important;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.5);
+}
+
+.react-flow__controls {
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.5);
+}
+.react-flow__controls-button {
+  background: #0f1630 !important;
+  border-bottom: 1px solid var(--color-line) !important;
+  fill: #cbd5e1 !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+.react-flow__controls-button:hover {
+  background: #16213f !important;
+}
+.react-flow__controls-button svg {
+  fill: inherit;
+}
+
+.react-flow__edge-path {
+  stroke: rgba(148, 163, 184, 0.4);
+  stroke-width: 1.6;
+}
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--color-accent-strong);
+  stroke-width: 2.2;
+}
+
+.react-flow__node {
+  cursor: grab;
+}
+.react-flow__node:active {
+  cursor: grabbing;
+}
+
+.react-flow__attribution {
+  background: transparent !important;
+  color: rgba(148, 163, 184, 0.5) !important;
+  font-size: 9px !important;
+}
+.react-flow__attribution a {
+  color: inherit !important;
+}
